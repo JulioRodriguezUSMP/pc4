@@ -16,10 +16,10 @@ WORKDIR /app
 COPY --from=build /app .
 
 # Copy the SQLite database if present
-COPY EvaluadorML.Web/app.db ./
+# COPY EvaluadorML.Web/app.db ./
 
 # Expose port 8080 for Render
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "EvaluadorML.Web.dll"]
+ENTRY
