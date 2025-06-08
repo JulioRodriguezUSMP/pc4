@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Recomendación de Productos";
+}
+<div class="bg-light py-4 min-vh-100">
+    <h2 class="text-center mb-4 text-primary">Recomendación de Productos</h2>
+    <form method="post" enctype="multipart/form-data" class="card p-3 mb-4 shadow-sm mx-auto border-primary" style="max-width:600px;">
+        <div class="mb-3">
+            <input type="text" name="userId" class="form-control border-primary" placeholder="UsuarioId (ej: U1)" required />
+        </div>
+        <div class="mb-3">
+            <label for="ratingsCsv" class="form-label">Cargar archivo CSV de ratings (opcional):</label>
+            <input type="file" name="ratingsCsv" class="form-control border-primary" accept=".csv" />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Recomendar</button>
+    </form>
+    @if (ViewBag.Products != null)
+    {
+        <div class="card p-3 mx-auto border-success" style="max-width:600px;">
+            <h5 class="mb-3 text-success">Productos recomendados:</h5>
+            <ul class="list-group list-group-flush">
+            @foreach (var p in ViewBag.Products)
+            {
+                <li class="list-group-item bg-white border-0 mb-2 rounded shadow-sm">
+                    <div class="d-flex align-items-center">
+                        <img src="@p.Image" alt="@p.Title" style="width:60px;height:60px;object-fit:contain;margin-right:15px;border-radius:8px;border:2px solid #0d6efd;background:#f0f8ff;" />
+                        <div class="flex-grow-1">
+                            <div class="fw-bold text-primary">@p.Title</div>
+                            <div class="text-muted small mb-1">@p.Description</div>
+                            <div class="fw-bold text-success">Precio: $@p.Price</div>
+                        </div>
+                        <span class="badge bg-info text-dark ms-2">Score: @p.Score.ToString("F3")</span>
+                    </div>
+                </li>
+            }
+            </ul>
+        </div>
+    }
+</div>
