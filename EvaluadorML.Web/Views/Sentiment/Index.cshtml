@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Análisis de Sentimiento";
+}
+<div class="bg-light py-4 min-vh-100">
+    <h2 class="text-center mb-4 text-primary">Análisis de Sentimiento</h2>
+    <form method="post" class="card p-3 mb-4 shadow-sm mx-auto border-primary" style="max-width:600px;">
+        <div class="mb-3">
+            <input type="text" name="opinion" class="form-control border-primary" placeholder="Escribe tu opinión" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Analizar</button>
+    </form>
+    @if (ViewBag.Result != null)
+    {
+        <div class="alert @(ViewBag.Result.Prediction ? "alert-success" : "alert-danger") mx-auto mt-4 text-center" style="max-width:600px;">
+            <h5 class="mb-3">Resultado: <span class="fw-bold">@(ViewBag.Result.Prediction ? "Positivo" : "Negativo")</span></h5>
+            <div>Score: <span class="fw-bold">@ViewBag.Result.Score.ToString("F3")</span></div>
+            <div>Probabilidad: <span class="fw-bold">@ViewBag.Result.Probability.ToString("P2")</span></div>
+        </div>
+    }
+</div>
