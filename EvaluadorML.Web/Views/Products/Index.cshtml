@@ -1,0 +1,86 @@
+@model List<EvaluadorML.Web.Controllers.ProductsController.ProductDto>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@{
+    ViewData["Title"] = "Productos";
+    bool isLoggedIn = SignInManager.IsSignedIn(User);
+}
+<h2>Productos</h2>
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+@foreach (var p in Model)
+{
+    <div class="col">
+        <div class="card h-100">
+            <img src="@p.image" class="card-img-top" style="max-height:200px;object-fit:contain;" alt="@p.title" />
+            <div class="card-body">
+                <h5 class="card-title">@p.title</h5>
+                <p class="card-text">@p.description</p>
+                <div class="mb-2 fw-bold">Precio: $@p.price</div>
+                <form asp-action="Opinion" method="post" class="rating-form" data-product-id="@p.id" autocomplete="off">
+                    <input type="hidden" name="productId" value="@p.id" />
+                    <div class="mb-2">
+                        <label>Califica este producto:</label>
+                        <div class="star-rating" style="font-size:1.5rem;">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <input type="radio" id="star-@p.id-@i" name="rating" value="@i" style="display:none;" />
+                                <label for="star-@p.id-@i" style="cursor:pointer; color: #FFD700;">&#9733;</label>
+                            }
+                        </div>
+                        <div class="text-danger mt-1 rating-required-message" style="display:none;">Selecciona el rating</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" @(isLoggedIn ? "" : "disabled")>Enviar rating</button>
+                    @if (!isLoggedIn)
+                    {
+                        <div class="text-danger mt-1">Por favor inicie sesión</div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+}
+</div>
+
+@section Scripts {
+    <script>
+        // Resalta las estrellas seleccionadas y controla el envío del formulario
+        document.querySelectorAll('.rating-form').forEach(function(form) {
+            var productId = form.getAttribute('data-product-id');
+            var stars = form.querySelectorAll('input[type="radio"][name="rating"]');
+            var labels = form.querySelectorAll('label[for^="star-"]');
+            var requiredMsg = form.querySelector('.rating-required-message');
+            var submitBtn = form.querySelector('button[type="submit"]');
+
+            // Inicialmente ninguna estrella seleccionada
+            stars.forEach(function(star) { star.checked = false; });
+            labels.forEach(function(label) { label.style.color = '#FFD700'; });
+
+            // Cambia el color de las estrellas al seleccionar
+            stars.forEach(function(star, idx) {
+                star.addEventListener('change', function() {
+                    var selected = parseInt(star.value);
+                    labels.forEach(function(label, i) {
+                        label.style.color = (i < selected) ? '#FFD700' : '#ccc';
+                    });
+                    if (requiredMsg) requiredMsg.style.display = 'none';
+                });
+            });
+
+            // Validación al enviar
+            form.addEventListener('submit', function(e) {
+                if (!@isLoggedIn.ToString().ToLower()) return;
+                var selected = Array.from(stars).some(star => star.checked);
+                if (!selected) {
+                    e.preventDefault();
+                    if (requiredMsg) requiredMsg.style.display = 'block';
+                } else {
+                    if (requiredMsg) requiredMsg.style.display = 'none';
+                }
+            });
+        });
+    </script>
+}
